@@ -61,6 +61,7 @@ class Autocomplete {
         this.keyboardHandler = new HashHandler();
         this.keyboardHandler.bindKeys(this.commands);
         this.parentNode = null;
+        this.setSelectOnHover = false;
 
         this.blurListener = this.blurListener.bind(this);
         this.changeListener = this.changeListener.bind(this);
@@ -191,6 +192,7 @@ class Autocomplete {
             this.$initInline();
 
         this.popup.autoSelect = this.autoSelect;
+        this.popup.setSelectOnHover(this.setSelectOnHover);
 
         this.popup.setData(this.completions.filtered, this.completions.filterText);
         if (this.editor.textInput.setAriaOptions) {
@@ -673,6 +675,11 @@ class CompletionProvider {
         var total = editor.completers.length;
         editor.completers.forEach(function(completer, i) {
             completer.getCompletions(editor, session, pos, prefix, function(err, results) {
+                if (completer.hideInlinePreview)
+                    results = results.map((result) =>  {
+                        return Object.assign(result, {hideInlinePreview: completer.hideInlinePreview});
+                    });
+
                 if (!err && results)
                     matches = matches.concat(results);
                 // Fetch prefix again, because they may have changed by now
