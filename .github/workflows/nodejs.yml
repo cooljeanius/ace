@@ -28,7 +28,7 @@ jobs:
     - name: Fetch the master branch
       run: git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm i
