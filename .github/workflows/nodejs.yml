@@ -22,7 +22,7 @@ jobs:
         node-version: [16.x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Fetch the master branch
       run: git fetch origin HEAD:refs/remotes/origin/HEAD --depth 1
     - name: Fetch the master branch
