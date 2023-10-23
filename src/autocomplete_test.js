@@ -297,6 +297,60 @@ module.exports = {
             }, 10);
         }
     },
+    "test: completers tooltip filtering": function (done) {
+        var editor = initEditor("");
+        var firstDoc = "First tooltip";
+        var secondDoc = "Second tooltip";
+        editor.completers = [
+            {
+                getCompletions: function (editor, session, pos, prefix, callback) {
+                    var completions = [
+                        {
+                            caption: "case",
+                            value: "case"
+                        }, {
+                            caption: "catch",
+                            value: "catch"
+                        }
+                    ];
+                    callback(null, completions);
+                },
+                getDocTooltip: function (item) {
+                    if (item.value === 'case') {
+                        item.docHTML = firstDoc;
+                    } 
+                    if (item.value === 'catch') {
+                        item.docHTML = secondDoc;
+                    }
+                }
+            }
+        ];
+        
+        sendKey("ca");
+        var popup = editor.completer.popup;
+
+        check(function() {
+            assert.equal(popup.data.length, 2);
+            assert.equal(popup.container.lastChild.innerHTML, firstDoc);
+
+            sendKey("t");
+
+            check(function() {
+                assert.equal(popup.data.length, 1);
+                assert.equal(popup.container.lastChild.innerHTML, secondDoc);
+
+                editor.destroy();
+                editor.container.remove();
+                done();
+            });
+        });
+    
+        function check(callback) {
+            setTimeout(function wait() {
+                callback();
+            }, 10);
+        }
+    },
     "test: slow and fast completers": function(done) {
         var syncCompleter={
             getCompletions: function(editor, session, pos, prefix, callback) {
@@ -778,6 +832,115 @@ module.exports = {
         // Should filter using the value instead.
         user.type(" value");
         assert.equal(completer.popup.isOpen, true);   
+    },
+    "test: should add inline preview content to aria-describedby": function(done) {
+        var editor = initEditor("fun");
+        
+        editor.completers = [
+            {
+                getCompletions: function (editor, session, pos, prefix, callback) {
+                    var completions = [
+                        {
+                            caption: "function",
+                            value: "function\nthat does something\ncool"
+                        }
+                    ];
+                    callback(null, completions);
+                }
+            }
+        ];
+        
+        var completer = Autocomplete.for(editor);
+        completer.inlineEnabled = true;
+
+        user.type("Ctrl-Space");
+        var inline = completer.inlineRenderer;
+
+        // Popup should be open, with inline text renderered.
+        assert.equal(editor.completer.popup.isOpen, true);  
+        assert.equal(completer.popup.getRow(), 0);
+        assert.strictEqual(inline.isOpen(), true);
+        assert.strictEqual(editor.renderer.$ghostText.text, "function\nthat does something\ncool");
+
+        editor.completer.popup.renderer.$loop._flush();
+        var popupTextLayer = completer.popup.renderer.$textLayer;
+
+        // aria-describedby of selected popup item should have aria-describedby set to the offscreen inline screen reader div and doc-tooltip.
+        assert.strictEqual(popupTextLayer.selectedNode.getAttribute("aria-describedby"), "doc-tooltip ace-inline-screenreader-line-0 ace-inline-screenreader-line-1 ace-inline-screenreader-line-2 ");
+
+        // The elements with these IDs should have the correct content.
+        assert.strictEqual(document.getElementById("ace-inline-screenreader-line-0").textContent,"function");
+        assert.strictEqual(document.getElementById("ace-inline-screenreader-line-1").textContent,"that does something");
+        assert.strictEqual(document.getElementById("ace-inline-screenreader-line-2").textContent,"cool");
+
+        done();
+    },
+    "test: update popup position only on mouse out when inline enabled and setSelectOnHover true": function() {
+        var editor = initEditor("fun");
+
+        editor.completers = [
+            {
+                getCompletions: function (editor, session, pos, prefix, callback) {
+                    var completions = [
+                        {
+                            caption: "functionshort",
+                            value: "function that does something uncool",
+                            score: 1
+                        },
+                        {
+                            caption: "functionlong",
+                            value: "function\nthat does something\ncool",
+                            score: 0
+                        }
+                    ];
+                    callback(null, completions);
+                }
+            }
+        ];
+
+        var completer = Autocomplete.for(editor);
+        completer.setSelectOnHover = true;
+        completer.inlineEnabled = true;
+
+        user.type("Ctrl-Space");
+        assert.equal(editor.completer.popup.isOpen, true);
+        var called = false;
+        editor.completer.$updatePopupPosition = function() {
+            called = true;
+        };
+
+        var inline = completer.inlineRenderer;
+
+        assert.equal(completer.popup.getRow(), 0);
+        assert.strictEqual(inline.isOpen(), true);
+        assert.strictEqual(editor.renderer.$ghostText.text, "function that does something uncool");
+ 
+        var text = completer.popup.renderer.content.childNodes[2];
+        var rect = text.getBoundingClientRect();
+
+        // We need two mouse events to trigger the updating of the hover marker.
+        text.dispatchEvent(new MouseEvent("move", {x: rect.left, y: rect.top}));
+        // Hover over the second row.
+        text.dispatchEvent(new MouseEvent("move", {x: rect.left + 1, y: rect.top + 20}));
+    
+        editor.completer.popup.renderer.$loop._flush();
+
+        // Check that the completion item changed to the longer item.
+        assert.equal(completer.popup.getRow(), 1);
+        assert.strictEqual(inline.isOpen(), true);
+        assert.strictEqual(editor.renderer.$ghostText.text, "function\nthat does something\ncool");
+
+        // Check that position update of popup is not called.
+        assert.ok(!called);
+
+        text.dispatchEvent(new MouseEvent("out", {x: rect.left, y: rect.top}));
+        editor.completer.popup.renderer.$loop._flush();
+
+        // Check that position update of popup is called after the mouseout.
+        assert.ok(called);
+
+        editor.destroy();
+        editor.container.remove();
     }
 };
 
