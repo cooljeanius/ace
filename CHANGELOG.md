@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.32.2](https://github.com/ajaxorg/ace/compare/v1.32.1...v1.32.2) (2023-12-14)
+
+
+### Bug Fixes
+
+* **themes:** changed the solarized theme primary color from `[#93](https://github.com/ajaxorg/ace/issues/93)A1A1` to `[#839496](https://github.com/ajaxorg/ace/issues/839496)`. ([#5422](https://github.com/ajaxorg/ace/issues/5422)) ([114a5c1](https://github.com/ajaxorg/ace/commit/114a5c163fd875b4fab332dadfadeeae41e4097a)), closes [#93A1A1](https://github.com/ajaxorg/ace/issues/93A1A1)
+
+### [1.32.1](https://github.com/ajaxorg/ace/compare/v1.32.0...v1.32.1) (2023-12-11)
+
+
+### Bug Fixes
+
+* don't show loading state when empty completer array is provided ([7a8a929](https://github.com/ajaxorg/ace/commit/7a8a92933b3fde75907612d106643d28efa2d776))
+* prevent browser scroll while scrolling over the tooltip ([#5414](https://github.com/ajaxorg/ace/issues/5414)) ([c6475c0](https://github.com/ajaxorg/ace/commit/c6475c00bcfa49dde37ef9de06ebba82ba5ba15d))
+* switch aria-selected to aria-current for webkit ([#5416](https://github.com/ajaxorg/ace/issues/5416)) ([bf1a4ea](https://github.com/ajaxorg/ace/commit/bf1a4ea607ed09b5a299390dd2daa5c1d0019e00)), closes [#5403](https://github.com/ajaxorg/ace/issues/5403)
+* yaml worker errors at undefined row/column ([06cc12a](https://github.com/ajaxorg/ace/commit/06cc12aad98176d931a1c1cf9a701f4ac0c33de5))
+
+## [1.32.0](https://github.com/ajaxorg/ace/compare/v1.31.2...v1.32.0) (2023-11-30)
+
+
+### Features
+
+* adding CloudEditor theme ([#5404](https://github.com/ajaxorg/ace/issues/5404)) ([b0ee067](https://github.com/ajaxorg/ace/commit/b0ee067fadaf9593ed2207f363a402eb9ab8d57a))
+
+
+### Bug Fixes
+
+* autocomplete tests ([#5407](https://github.com/ajaxorg/ace/issues/5407)) ([cf6999d](https://github.com/ajaxorg/ace/commit/cf6999d9cb4103df16dc38a8cbfd40ab2a999e6d))
+* set completion popup role to 'menu' for safari ([6845905](https://github.com/ajaxorg/ace/commit/684590546746fa2ef090c10c140e01e43974d8f4))
+* stop rendering the completion popup disconnected from the editor for long ghost text ([#5401](https://github.com/ajaxorg/ace/issues/5401)) ([94d68a7](https://github.com/ajaxorg/ace/commit/94d68a73042c61a786d253fd0838e62cc5770a31))
+* try to scroll inline preview into view ([#5400](https://github.com/ajaxorg/ace/issues/5400)) ([95af560](https://github.com/ajaxorg/ace/commit/95af5608b655259d12cdbc4ca28cf450f9e649c7))
+
+### [1.31.2](https://github.com/ajaxorg/ace/compare/v1.31.1...v1.31.2) (2023-11-15)
+
+
+### Bug Fixes
+
+* inline preview with loading state ([05db94f](https://github.com/ajaxorg/ace/commit/05db94f53774f64318de757347f7217043744fe6))
+
 ### [1.31.1](https://github.com/ajaxorg/ace/compare/v1.31.0...v1.31.1) (2023-10-30)
 
 
