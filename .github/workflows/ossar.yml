@@ -4,11 +4,10 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-# This workflow integrates njsscan with GitHub's Code Scanning feature
-# nodejsscan is a static security code scanner that finds insecure code patterns
-# in your Node.js applications
-
-name: njsscan sarif
+# This workflow integrates a collection of open source static analysis tools
+# with GitHub code scanning. For documentation, or to provide feedback, visit
+# https://github.com/github/ossar-action
+name: OSSAR
 
 on:
   push:
@@ -23,28 +22,32 @@ on:
       - dependabot/*
       - autofix/alert-*
   schedule:
-    - cron: '30 14 * * 3'
+    - cron: '41 21 * * 5'
 
 permissions:
   contents: read
 
 jobs:
-  njsscan:
+  OSSAR-Scan:
+    # OSSAR runs on windows-latest.
+    # ubuntu-latest and macos-latest support coming soon
     permissions:
       contents: read  # for actions/checkout to fetch code
       security-events: write  # to upload SARIF results
       actions: read  # only required for private repos to get Action run status
-    runs-on: ubuntu-latest
-    name: njsscan code scanning
+    runs-on: windows-latest
+
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
-      - name: nodejsscan scan
-        id: njsscan
-        uses: ajinabraham/njsscan-action@d58d8b2f26322cd35a9efb8003baac517f226d81
-        with:
-          args: '. --sarif --output results.sarif || echo "something happened"'
-      - name: Upload njsscan report
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Run open source static analysis tools
+      - name: Run OSSAR
+        uses: github/ossar-action@v1
+        id: ossar
+
+      # Upload results to the Security tab
+      - name: Upload OSSAR results
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: results.sarif
+          sarif_file: ${{ steps.ossar.outputs.sarifFile }}

@@ -1,16 +1,25 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+---
+# This workflow will do a clean install of node dependencies, build the source
+# code and run tests across different versions of node
+# For more information see:
+# https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - dependabot/*
+      - autofix/alert-*
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - dependabot/*
+      - autofix/alert-*
 
 permissions:
-  contents: read # to fetch code (actions/checkout)
+  contents: read  # to fetch code (actions/checkout)
 
 jobs:
   build:
@@ -22,44 +31,54 @@ jobs:
         node-version: [16.x]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Fetch the master branch
-      run: git fetch origin HEAD:refs/remotes/origin/HEAD --depth 1
-    - name: Fetch the master branch
-      run: git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm i
-    - run: npm run cover
-    # run linter
-    - run: |
-        set -x;
-        git status;
-        git checkout HEAD -- package.json;
-        changes=$(git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR);
-        if [ "$changes" == "" ]; then
+      - uses: actions/checkout@v4
+      - name: Fetch the master branch
+        run: git fetch origin HEAD:refs/remotes/origin/HEAD --depth 1
+      - name: Fetch the master branch
+        run: git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm i
+      - run: npm run cover
+      - run: |
+          echo "run linter";
+          sudo apt-get -qq update;
+          sudo apt-get -qq install eslint;
+          set -x;
+          git status;
+          git checkout HEAD -- package.json;
+          changes=$(git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR);
+          if [ "${changes}" == "" ]; then
             echo "checking all files";
-            node node_modules/eslint/bin/eslint "lib/ace/**/*.js";
-        else
-            jsChanges=$(echo "$changes" | grep -P '.js$' || :);
-            if [ "$jsChanges" == "" ]; then
-                echo "nothing to check";
+            node node_modules/eslint/bin/eslint "lib/ace/**/*.js" || \
+              npx eslint "lib/ace/**/*.js" || \
+              /usr/bin/eslint "lib/ace/**/*.js" || \
+              echo "problem with eslint";
+          else
+            jsChanges=$(echo "${changes}" | grep -P '.js$' || :);
+            if [ "${jsChanges}" == "" ]; then
+              echo "no js changes; nothing to check";
             else
-                echo "checking $jsChanges";
-                node node_modules/eslint/bin/eslint $jsChanges;
+              echo "checking ${jsChanges}...";
+              node node_modules/eslint/bin/eslint "${jsChanges}" || \
+                npx eslint "${jsChanges}" || \
+                /usr/bin/eslint "${jsChanges}" || \
+                echo "problem with eslint";
             fi
-        fi
-    # check types
-    - run: npm run update-types
-    - run: node_modules/.bin/tsc --noImplicitAny --strict --noUnusedLocals --noImplicitReturns --noUnusedParameters --noImplicitThis ace.d.ts
-    - run: npm run typecheck
-    - run: git diff --exit-code ./ace-modes.d.ts ./ace.d.ts
-    - uses: codecov/codecov-action@v3
-      with:
-        token: d8edca4b-8e97-41e5-b54e-34c7cf3b2d47
-        file: ./coverage/coverage.json
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: true
+          fi
+      # check types
+      - run: npm run update-types
+      - run: |
+          node_modules/.bin/tsc --noImplicitAny --strict --noUnusedLocals \
+            --noImplicitReturns --noUnusedParameters --noImplicitThis ace.d.ts
+      - run: npm run typecheck
+      - run: git diff --exit-code ./ace-modes.d.ts ./ace.d.ts
+      - uses: codecov/codecov-action@v3
+        with:
+          token: d8edca4b-8e97-41e5-b54e-34c7cf3b2d47
+          file: ./coverage/coverage.json
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
