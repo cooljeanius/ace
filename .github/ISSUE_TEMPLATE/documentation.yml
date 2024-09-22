@@ -1,5 +1,5 @@
 ---
-name: "📕 Documentation Issue"
+name: "Documentation Issue"
 description: Report an issue in the documentation
 title: "(short issue description)"
 labels: [documentation, needs-triage]
