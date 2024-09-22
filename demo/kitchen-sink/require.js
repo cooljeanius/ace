@@ -505,8 +505,9 @@
             if (!/^(\s|\/\*([^*]|[*](?!\/))*\*\/|\/\/.*[\r]?\n)*define\s*\(\s*function\s*\(\s*require\b/.test(val) && !/define\(\[\],/.test(val))
                 val = "define(function(require, exports, module){" + val + "\n});"
             nextModule = {name: id};
-            /* eslint no-eval:0 */
-            global.eval(val + "\n//# sourceURL=" + path);
+            var script = document.createElement('script');
+            script.text = val + "\n//# sourceURL=" + path;
+            document.head.appendChild(script).parentNode.removeChild(script);
             callback(null, id);
             return define.loaded[id];
         };
