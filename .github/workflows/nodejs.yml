@@ -44,6 +44,8 @@ jobs:
       - run: npm run cover
       - run: |
           echo "run linter";
+          sudo apt-get -qq update;
+          sudo apt-get -qq install eslint;
           set -x;
           git status;
           git checkout HEAD -- package.json;
@@ -51,7 +53,9 @@ jobs:
           if [ "${changes}" == "" ]; then
             echo "checking all files";
             node node_modules/eslint/bin/eslint "lib/ace/**/*.js" || \
-              npx eslint "lib/ace/**/*.js" || echo "problem with eslint";
+              npx eslint "lib/ace/**/*.js" || \
+              /usr/bin/eslint "lib/ace/**/*.js" || \
+              echo "problem with eslint";
           else
             jsChanges=$(echo "${changes}" | grep -P '.js$' || :);
             if [ "${jsChanges}" == "" ]; then
@@ -59,7 +63,9 @@ jobs:
             else
               echo "checking ${jsChanges}...";
               node node_modules/eslint/bin/eslint "${jsChanges}" || \
-                npx eslint "${jsChanges}" || echo "problem with eslint";
+                npx eslint "${jsChanges}" || \
+                /usr/bin/eslint "${jsChanges}" || \
+                echo "problem with eslint";
             fi
           fi
       # check types
