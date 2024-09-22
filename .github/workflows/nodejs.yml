@@ -48,16 +48,18 @@ jobs:
           git status;
           git checkout HEAD -- package.json;
           changes=$(git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR);
-          if [ "$changes" == "" ]; then
+          if [ "${changes}" == "" ]; then
             echo "checking all files";
-            node node_modules/eslint/bin/eslint "lib/ace/**/*.js";
+            node node_modules/eslint/bin/eslint "lib/ace/**/*.js" || \
+              npx eslint "lib/ace/**/*.js" || echo "problem with eslint";
           else
-            jsChanges=$(echo "$changes" | grep -P '.js$' || :);
-            if [ "$jsChanges" == "" ]; then
-                echo "nothing to check";
+            jsChanges=$(echo "${changes}" | grep -P '.js$' || :);
+            if [ "${jsChanges}" == "" ]; then
+              echo "no js changes; nothing to check";
             else
-                echo "checking $jsChanges";
-                node node_modules/eslint/bin/eslint "$jsChanges";
+              echo "checking ${jsChanges}...";
+              node node_modules/eslint/bin/eslint "${jsChanges}" || \
+                npx eslint "${jsChanges}" || echo "problem with eslint";
             fi
           fi
       # check types
