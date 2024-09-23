@@ -387,7 +387,7 @@
         + "<br><br><a onclick='clearResults()' href='?'>clearResults</a>";
     }
     
-    if (method && tests[method]) {
+    if (method && tests.hasOwnProperty(method) && typeof tests[method] === 'function') {
         var update = tests[method]();
         runTest(update, function(e, a) {
             var all = localStorage["m_" + method];
@@ -395,7 +395,7 @@
             showResults()
         })
     } else {
-        showResults();
+        document.getElementById("root").innerHTML = "Unsupported test method.";
     }
     
 </script>
