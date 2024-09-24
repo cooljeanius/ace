@@ -237,7 +237,7 @@ function hyphenate(str) {
 }
 
 function quoteString(str) {
-    return '"' + str.replace(/\\/, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\\n") + '"';
+    return '"' + str.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\\n") + '"';
 }
 
 var cssTemplate = fs.readFileSync(__dirname + "/templates/theme.css", "utf8");
