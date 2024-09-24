@@ -145,7 +145,7 @@ exports.snakeCase = function(str) {
 };
 
 exports.quoteString = function(str) {
-    return '"' + str.replace(/\\/, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\\n") + '"';
+    return '"' + str.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\\n") + '"';
 };
 
 
