@@ -115,7 +115,7 @@ var OdinHighlightRules = function () {
         token: "constant.numeric", // rune
         regex:
           "'(?:[^\\'\uD800-\uDBFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|" +
-          stringEscapeRe.replace('"', "") +
+          stringEscapeRe.replace(/"/g, "") +
           ")'"
       },
       {
