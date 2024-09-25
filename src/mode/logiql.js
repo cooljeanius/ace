@@ -1,6 +1,7 @@
 "use strict";
 
 var oop = require("../lib/oop");
+var htmlparser2 = require("htmlparser2");
 var TextMode = require("./text").Mode;
 var LogiQLHighlightRules = require("./logiql_highlight_rules").LogiQLHighlightRules;
 var FoldMode = require("./folding/coffee").FoldMode;
@@ -32,7 +33,7 @@ oop.inherits(Mode, TextMode);
             return indent;
 
         var match = line.match();
-        if (/(-->|<--|<-|->|{)\s*$/.test(line))
+        if (this.isCommentEndTag(line))
             indent += tab;
         return indent;
     };
@@ -99,6 +100,17 @@ oop.inherits(Mode, TextMode);
         var col = it.getCurrentTokenColumn();
         var row = it.getCurrentTokenRow();
         return new Range(row, col, row, col + tok.value.length);
+    };
+    this.isCommentEndTag = function(line) {
+        var isEndTag = false;
+        var parser = new htmlparser2.Parser({
+            oncommentend() {
+                isEndTag = true;
+            }
+        });
+        parser.write(line);
+        parser.end();
+        return isEndTag;
     };
     this.$id = "ace/mode/logiql";
 }).call(Mode.prototype);
