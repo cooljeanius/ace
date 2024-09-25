@@ -6596,7 +6596,7 @@ domLib.importCssString(`.normal-mode .ace_cursor{
             if (getOption('pcre')) {
                regexPart = regexPart + '/' + flagsPart;
             } else {
-               regexPart = regexPart.replace(/\//g, "\\/") + '/' + flagsPart;
+               regexPart = regexPart.replace(/\\/g, "\\\\").replace(/\//g, "\\/") + '/' + flagsPart;
             }
           }
         }
