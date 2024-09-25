@@ -85,7 +85,7 @@ function ux() {
     });
     
     function showMethodContent() {
-        var locationHash = location.hash.replace(/^#/, '').replace(/\./g, '\\.');
+        var locationHash = location.hash.replace(/^#/, '').replace(/\\/g, '\\\\').replace(/\./g, '\\.');
         var equalsPos = location.hash.indexOf("=");
         
         if (equalsPos >=0) {
