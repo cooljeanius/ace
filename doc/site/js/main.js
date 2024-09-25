@@ -78,7 +78,8 @@ $(function() {
             // handles dropping in from new link
             var section = $.bbq.getState("section");
             if (section) {
-                $("li#dropdown_" + section.replace(/\./g, '\\.') + " a").triggerHandler('click');
+                section = section.replace(/\\/g, '\\\\').replace(/\./g, '\\.');
+                $("li#dropdown_" + section + " a").triggerHandler('click');
             }
             
             //setupDisqus(_self.attr("href"));
