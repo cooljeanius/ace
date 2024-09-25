@@ -117,7 +117,7 @@ function scrollTo(el, data) {
         data = el.getAttribute("data-id");
         //location.hash = data;
     }
-    var el = $("span#" + data.replace(/\./g, "\\."))[0];
+    var el = $("span#" + data.replace(/\\/g, "\\\\").replace(/\./g, "\\."))[0];
     if (!el) return;
 
     var article = $(el).closest('.article')[0];
