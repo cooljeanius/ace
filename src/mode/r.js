@@ -58,7 +58,7 @@
       // todo import codeModel from RStudio
       this.tokenRe = new RegExp("^[" + unicode.wordChars + "._]+", "g");
 
-      this.nonTokenRe = new RegExp("^(?:[^" + unicode.wordChars + "._]|\s])+", "g");
+      this.nonTokenRe = new RegExp("^(?:[^" + unicode.wordChars + "._]|\\s])+", "g");
 
       /*this.$complements = {
                "(": ")",
