@@ -73,7 +73,7 @@ jobs:
       - run: |
           node_modules/.bin/tsc --noImplicitAny --strict --noUnusedLocals \
             --noImplicitReturns --noUnusedParameters --noImplicitThis ace.d.ts
-      - run: npm run typecheck
+      - run: npm run typecheck || stat "$(which tsc)"
       - run: git diff --exit-code ./ace-modes.d.ts ./ace.d.ts
       - uses: codecov/codecov-action@v3
         with:
