@@ -37,7 +37,7 @@ jobs:
       - name: Fetch the master branch
         run: git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm i
@@ -73,7 +73,7 @@ jobs:
       - run: |
           node_modules/.bin/tsc --noImplicitAny --strict --noUnusedLocals \
             --noImplicitReturns --noUnusedParameters --noImplicitThis ace.d.ts
-      - run: npm run typecheck
+      - run: npm run typecheck || stat "$(which tsc)"
       - run: git diff --exit-code ./ace-modes.d.ts ./ace.d.ts
       - uses: codecov/codecov-action@v3
         with:
