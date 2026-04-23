@@ -4,7 +4,7 @@
 # For more information see:
 # https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: CI
+name: CI (nodejs.yml)
 
 on:
   push:
@@ -23,7 +23,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -42,7 +41,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm i
       - run: npm run cover
-      - run: |
+      - name: run linter
+        run: |
           echo "run linter";
           sudo apt-get -qq update;
           sudo apt-get -qq install eslint;
@@ -68,11 +68,13 @@ jobs:
                 echo "problem with eslint";
             fi
           fi
-      # check types
-      - run: npm run update-types
-      - run: |
+      - name: check types
+        run: npm run update-types
+      - name: run tsc
+        run: |
           node_modules/.bin/tsc --noImplicitAny --strict --noUnusedLocals \
-            --noImplicitReturns --noUnusedParameters --noImplicitThis ace.d.ts
+            --noImplicitReturns --noUnusedParameters --noImplicitThis --ignoreConfig \
+            ace.d.ts
       - run: npm run typecheck || stat "$(which tsc)"
       - run: git diff --exit-code ./ace-modes.d.ts ./ace.d.ts
       - uses: codecov/codecov-action@v3
