@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript-typescript']
+        language: ['actions', 'javascript-typescript']
         # CodeQL supports the following languages:
         # 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript',
         # 'python', 'ruby', 'swift'
