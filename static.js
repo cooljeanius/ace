@@ -41,7 +41,12 @@ http.createServer(function(req, res) {
         return error(res, 400, "400 Bad request: Directory traversal is not allowed.");
     }
 
-    var filename = path.join(process.cwd(), uri);
+    var rootDir = process.cwd();
+    var filename = path.resolve(rootDir, "." + uri);
+    var relativePath = path.relative(rootDir, filename);
+    if (path.isAbsolute(relativePath) || relativePath.startsWith("..") || relativePath.indexOf(".." + path.sep) === 0) {
+        return error(res, 400, "400 Bad request: Directory traversal is not allowed.");
+    }
 
     if (req.method == "OPTIONS") {
         writeHead(res, 200);
