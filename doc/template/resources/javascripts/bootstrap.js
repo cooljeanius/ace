@@ -209,7 +209,7 @@
 
       if (e.isDefaultPrevented()) return
 
-      $target = $(selector)
+      $target = $($.find(selector))
 
       this.activate($this.parent('li'), $ul)
       this.activate($target, $target.parent(), function () {
