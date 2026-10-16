@@ -10,7 +10,7 @@
 <pre id="root"></pre>
 
 <script type="text/javascript" charset="utf-8">
-    var tests = {};
+    var tests = new Map();
     tests.innerHTML = function() {
         function update(rootEl, lines) {
             var html = []
@@ -293,7 +293,7 @@
         }
         return update;
     }
-    tests.domdomReuseNodes_AllWrapped = function dom32() {
+    tests.set("domdomReuseNodes_AllWrapped", function dom32() {
         function elt(parent, name, className, content) {
             var el = document.createElement(name);
             if (content) {
@@ -340,7 +340,7 @@
             clearEl(rootEl, ch.length - i)
         }
         return update;
-    }
+    });
     
     function runTest(render, cb) {
         var rootEl = document.getElementById("root")
@@ -387,8 +387,8 @@
         + "<br><br><a onclick='clearResults()' href='?'>clearResults</a>";
     }
     
-    if (method && tests.hasOwnProperty(method) && typeof tests[method] === 'function') {
-        var update = tests[method]();
+    if (method && tests.has(method) && typeof tests.get(method) === 'function') {
+        var update = tests.get(method)();
         runTest(update, function(e, a) {
             var all = localStorage["m_" + method];
             localStorage["m_" + method] = all ?   all + "," + a : a;
